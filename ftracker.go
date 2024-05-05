@@ -98,7 +98,11 @@ const (
 // weight float64 — вес пользователя.
 // height float64 — рост пользователя.
 func WalkingSpentCalories(action int, duration, weight, height float64) float64 {
-	heightInCm := height * cmInM
+	if height == 0 || cmInM == 0 {
+		return 0.0
+		// или стоит здесь сделать вывод ошибки?
+	}
+	heightInCm := height / cmInM
 	meanSpeedMsec := meanSpeed(action, duration) * kmhInMsec
 	return ((walkingCaloriesWeightMultiplier * weight) + (math.Pow(meanSpeedMsec, 2)/heightInCm)*walkingSpeedHeightMultiplier*weight) * duration * minInH
 }
