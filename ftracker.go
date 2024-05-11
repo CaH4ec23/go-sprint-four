@@ -52,9 +52,9 @@ func ShowTrainingInfo(action int, trainingType string, duration, weight, height 
 		calories := RunningSpentCalories(action, weight, duration) // вызовите здесь необходимую функцию
 		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n", trainingType, duration, distance, speed, calories)
 	case trainingType == "Ходьба":
-		distance := distance(action)                                           // вызовите здесь необходимую функцию
-		speed := meanSpeed(action, duration)                                   // вызовите здесь необходимую функцию
-		calories := WalkingSpentCalories(action, weight, duration, height*100) // вызовите здесь необходимую функцию
+		distance := distance(action)                                       // вызовите здесь необходимую функцию
+		speed := meanSpeed(action, duration)                               // вызовите здесь необходимую функцию
+		calories := WalkingSpentCalories(action, weight, duration, height) // вызовите здесь необходимую функцию
 		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n", trainingType, duration, distance, speed, calories)
 	case trainingType == "Плавание":
 		distance := distance(action)                                               // вызовите здесь необходимую функцию
@@ -98,9 +98,10 @@ const (
 // weight float64 — вес пользователя.
 // height float64 — рост пользователя.
 func WalkingSpentCalories(action int, duration, weight, height float64) float64 {
-	heightInCm := height / cmInM
-	meanSpeedMsec := meanSpeed(action, duration) * kmhInMsec
-	return (walkingCaloriesWeightMultiplier*weight + math.Pow(meanSpeedMsec, 2)/heightInCm*walkingSpeedHeightMultiplier*weight) * duration * minInH
+	if height == 0 {
+		return 0
+	}
+	return (walkingCaloriesWeightMultiplier*weight + (math.Pow(meanSpeed(action, duration)*kmhInMsec, 2)/(height/cmInM))*walkingSpeedHeightMultiplier*weight) * duration * minInH
 }
 
 // Константы для расчета калорий, расходуемых при плавании.
